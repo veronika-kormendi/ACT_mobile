@@ -1,9 +1,7 @@
 
-package com.example.act
+package com.example.act.screens
 
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable

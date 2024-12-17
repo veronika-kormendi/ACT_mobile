@@ -1,4 +1,4 @@
-package com.example.act
+package com.example.act.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.act.Screen
 
 @Composable
 fun WelcomeScreen(navController: NavHostController) {
