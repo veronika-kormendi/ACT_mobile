@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.act.screens.ProfileScreen
+import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SignUpScreen
 import com.example.act.screens.SupportScreen
 import com.example.act.screens.WelcomeScreen
@@ -22,7 +23,7 @@ sealed class Screen(val route: String){
     object LoggedIn : Screen("UserAccountScreen")
     object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
     object Support : Screen("SupportScreen")
-    object Feedback : Screen("RatingsAndReviewScreen")
+    object Reviews : Screen("ReviewScreen")
     object PriceAlert : Screen("PriceAlertScreen")
     object Assets: Screen("AssetsScreen")
     object Profile: Screen("ProfileScreen")
@@ -52,6 +53,7 @@ fun MyMain(){
         //composable(Screen.LoggedIn.route) { LoggedInScreen(navController) }
         composable(Screen.Profile.route) { ProfileScreen(navController) }
         composable(Screen.Support.route) { SupportScreen(navController) }
+        composable(Screen.Reviews.route) { ReviewScreen(navController) }
     }
 
 }

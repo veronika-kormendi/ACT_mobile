@@ -52,6 +52,7 @@ fun SupportScreen(navController: NavController) {
                 color = Color(0xFF0F4C75),
                 modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
             )
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = { openDialer(context, phoneNumber) },
@@ -70,6 +71,23 @@ fun SupportScreen(navController: NavController) {
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {  },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+                    .height(48.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    text = "Contact Support via form",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White
+                )
+            }
 
         }
     }

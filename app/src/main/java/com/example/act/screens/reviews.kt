@@ -1,10 +1,20 @@
 package com.example.act.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,13 +24,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
+
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun ReviewScreen(navController: NavController) {
     val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFBBE1FA))
+            .background(Color(0xFFFFFFFF))
             .padding(16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -32,39 +43,12 @@ fun ProfileScreen(navController: NavController) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Welcome!",
+                text = "Review Screen",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF0F4C75),
                 modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
             )
-
-            ProfileButton(text = "Support",
-                onClick = { navController.navigate("SupportScreen") })
-            Spacer(modifier = Modifier.height(8.dp))
-            ProfileButton(text = "Reviews",
-                onClick = {navController.navigate("ReviewScreen")})
-
         }
-    }
-}
-
-@Composable
-fun ProfileButton(text: String, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 32.dp)
-            .height(48.dp),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-            color = Color.White
-        )
     }
 }
