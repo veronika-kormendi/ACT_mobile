@@ -21,9 +21,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.act.ui.theme.ACTTheme
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val db = Firebase.firestore
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
@@ -33,35 +36,3 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-////creating screens/routes of the app
-//sealed class Screen(val route: String){
-//    object Welcome : Screen("WelcomeScreen") // login
-//    object SignUp : Screen("SignUpScreen") // for account registration
-//    object LoggedIn : Screen("UserAccountScreen")
-//    object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
-//    object Help : Screen("HelpScreen")
-//    object Feedback : Screen("RatingsAndReviewScreen")
-//    object PriceAlert : Screen("PriceAlertScreen")
-//    object Assets: Screen("AssetsScreen")
-//
-//
-//}
-//// navigation items for the bottom bar
-//data class NavItem(
-//    var label: String,
-//    val icon: ImageVector,
-//    val screen: Screen
-//)
-
-//@Composable
-//fun MyMain(){
-//    //init navigation controller
-//    val navContoroller = rememberNavController()
-//    // list of navigation items
-//    val navItemList = listOf(
-//        NavItem(label = "Account", icon = Icons.Default.Home, screen = Screen.LoggedIn),
-//        NavItem(label = "Assets", icon = Icons.Default.ShoppingCart, screen = Screen.Assets),
-//        NavItem(label = "Help", icon = Icons.Default.Info, screen = Screen.Assets)
-//    )
-//}

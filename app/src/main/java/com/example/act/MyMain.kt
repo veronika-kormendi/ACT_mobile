@@ -53,7 +53,7 @@ fun MyMain(){
         //composable(Screen.LoggedIn.route) { LoggedInScreen(navController) }
         composable(Screen.Profile.route) { ProfileScreen(navController) }
         composable(Screen.Support.route) { SupportScreen(navController) }
-        composable(Screen.Reviews.route) { ReviewScreen(navController) }
+        composable(Screen.Reviews.route) { ReviewScreen() }
     }
 
 }

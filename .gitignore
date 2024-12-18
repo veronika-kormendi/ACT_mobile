@@ -1,3 +1,4 @@
+google-services.json
 # Compiled class file
 *.class
 
@@ -125,3 +126,7 @@ output.json
 #NDK
 obj/
 .externalNativeBuild
+
+
+
+.env

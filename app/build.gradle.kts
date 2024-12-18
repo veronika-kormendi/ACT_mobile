@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -50,7 +51,8 @@ android {
 }
 
 dependencies {
-
+    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -64,6 +66,7 @@ dependencies {
     implementation(libs.androidx.runner)
     //implementation("io.coil-kt:coil-compose:2.7.0")
     implementation(libs.coil.compose)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

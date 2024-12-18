@@ -12,6 +12,8 @@ composeBom = "2024.04.01"
 navigationCompose = "2.8.2"
 volley = "1.2.1"
 runner = "1.6.1"
+googleGmsGoogleServices = "4.4.2"
+firebaseFirestore = "25.1.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +34,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 
 
@@ -39,3 +42,4 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
