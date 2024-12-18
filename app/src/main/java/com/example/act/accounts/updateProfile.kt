@@ -1,4 +1,4 @@
-package com.example.sportsteam.screens.accounts
+package com.example.act.accounts
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable

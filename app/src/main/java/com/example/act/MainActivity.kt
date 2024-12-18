@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.act.accounts.ProfileUpdateScreen
 import com.example.act.accounts.SigninScreen
 import com.example.act.accounts.SignupScreen
 import com.example.act.data.User
@@ -26,7 +27,6 @@ import com.example.act.screens.ProfileScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportScreen
 import com.example.act.ui.theme.ACTTheme
-import com.example.sportsteam.screens.accounts.ProfileUpdateScreen
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,13 +40,10 @@ class MainActivity : ComponentActivity() {
     private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val db = Firebase.firestore
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             ACTTheme {
-                val context = LocalContext.current
-                //init navigation controller
                 val navController = rememberNavController()
 
                 NavHost(navController = navController, startDestination = Screen.Login.route) {
