@@ -38,11 +38,12 @@ fun ReviewScreen(viewModel: ReviewViewModel = viewModel()) {
             )
         }
         else -> {
+            Spacer(modifier = Modifier.height(8.dp))
             Column(
                 modifier = Modifier
                     .verticalScroll(rememberScrollState())
                     .fillMaxSize()
-                    .background(Color(0xFFbdacd1))
+                    .background(Color(0xFFBBE1FA))
                     .padding(16.dp)
             ) {
                 uiState.reviews.forEach { review ->
@@ -64,7 +65,8 @@ fun ReviewRow(review: Review) {
     ) {
         Text(
             text = "Name: ${review.name}",
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color(0xFF0F4C75)
         )
         Text(
             text = "Rating: ${review.rating} / 5",
@@ -73,7 +75,8 @@ fun ReviewRow(review: Review) {
         )
         Text(
             text = "Comment: ${review.comment}",
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color(0xFF0F4C75)
         )
         Text(
             text = "Date: ${review.date}",

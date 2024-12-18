@@ -1,6 +1,7 @@
 package com.example.act.accounts
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -41,7 +42,7 @@ fun ProfileUpdateScreen(navController: NavController) {
                         Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
                     } else {
                         val document = querySnapshot.documents[0]
-                        name = document.getString("username") ?: ""
+                        name = document.getString("name") ?: ""
                         documentId = document.id
                     }
                     isLoading = false
@@ -61,6 +62,7 @@ fun ProfileUpdateScreen(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(Color(0xFFBBE1FA))
                 .padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -86,7 +88,7 @@ fun ProfileUpdateScreen(navController: NavController) {
             Button(
                 onClick = {
                     val userData = mutableMapOf(
-                        "username" to name
+                        "name" to name
                     )
 
                     documentId?.let { id ->

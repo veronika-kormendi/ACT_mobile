@@ -43,7 +43,7 @@ fun SigninScreen(navController: NavController, auth: FirebaseAuth) {
             modifier = Modifier.size(300.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(64.dp))
 
         // Email and password fields
         TextField(
@@ -52,6 +52,8 @@ fun SigninScreen(navController: NavController, auth: FirebaseAuth) {
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
         TextField(
             value = password,
             onValueChange = { password = it },

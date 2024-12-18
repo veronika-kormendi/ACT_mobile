@@ -13,6 +13,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -45,33 +54,63 @@ class MainActivity : ComponentActivity() {
         setContent {
             ACTTheme {
                 val navController = rememberNavController()
-
-                NavHost(navController = navController, startDestination = Screen.Login.route) {
-
-                    composable(Screen.Profile.route) { ProfileScreen(navController) }
-                    composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
-                    composable(Screen.Support.route) { SupportScreen(navController) }
-                    composable(Screen.Reviews.route) { ReviewScreen() }
-                    composable(Screen.Login.route) {
-                        SigninScreen(
-                            navController = navController,
-                            auth = auth
-                        )
-                    }
-                    composable(Screen.SignUp.route) {
-                        SignupScreen(
-                            context = this@MainActivity,
-                            navController = navController,
-                            onSignup = { email, password, name, date,
-                                         onSignupSuccess ->
-                                signupUser(email, password, name, date) { user ->
-                                    onSignupSuccess(user)
-                                    navController.navigate(Screen.Login.route)
-                                }
+                var selectedIndex by remember { mutableStateOf(0) }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        NavigationBar {
+                            navItemList.forEachIndexed { index, navItem ->
+                                NavigationBarItem(
+                                    selected = selectedIndex == index,
+                                    onClick = {
+                                        selectedIndex = index
+                                        if (navController.currentDestination?.route != navItem.screen.route) {
+                                            navController.navigate(navItem.screen.route) {
+                                                launchSingleTop =
+                                                    true // prevent multiple copies of same destination
+                                                restoreState =
+                                                    true // restore state to previously selected item
+                                            }
+                                        }
+                                    },
+                                    label = { Text(text = navItem.label) },
+                                    icon = { navItem.icon }
+                                )
                             }
-                        )
+                        }
+                    },
+                    )
+                { innerPadding ->
+                        NavHost(navController = navController,
+                            startDestination = Screen.Login.route,
+                            modifier = Modifier.padding(innerPadding)) {
+
+                        composable(Screen.Profile.route) { ProfileScreen(navController) }
+                        composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
+                        composable(Screen.Support.route) { SupportScreen(navController) }
+                        composable(Screen.Reviews.route) { ReviewScreen() }
+                        composable(Screen.Login.route) {
+                            SigninScreen(
+                                navController = navController,
+                                auth = auth
+                            )
+                        }
+                        composable(Screen.SignUp.route) {
+                            SignupScreen(
+                                context = this@MainActivity,
+                                navController = navController,
+                                onSignup = { email, password, name, date,
+                                             onSignupSuccess ->
+                                    signupUser(email, password, name, date) { user ->
+                                        onSignupSuccess(user)
+                                        navController.navigate(Screen.Login.route)
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
+
             }
         }
         auth = FirebaseAuth.getInstance()

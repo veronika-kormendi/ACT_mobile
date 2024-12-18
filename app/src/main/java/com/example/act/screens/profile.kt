@@ -20,7 +20,7 @@ fun ProfileScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFBBE1FA))
+            .background(Color(0xFFE3ECF1))
             .padding(16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -38,7 +38,7 @@ fun ProfileScreen(navController: NavController) {
                 color = Color(0xFF0F4C75),
                 modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
             )
-
+            Spacer(modifier = Modifier.height(20.dp))
             ProfileButton(text = "Support",
                 onClick = { navController.navigate("SupportScreen") })
             Spacer(modifier = Modifier.height(8.dp))
@@ -56,7 +56,7 @@ fun ProfileScreen(navController: NavController) {
 fun ProfileButton(text: String, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBBE1FA)),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp)
