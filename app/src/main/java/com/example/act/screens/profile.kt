@@ -44,6 +44,9 @@ fun ProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(8.dp))
             ProfileButton(text = "Reviews",
                 onClick = {navController.navigate("ReviewScreen")})
+            Spacer(modifier = Modifier.height(8.dp))
+            ProfileButton(text = "Update",
+                onClick = {navController.navigate("UpdateProfileScreen")})
 
         }
     }
