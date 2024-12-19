@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class ReviewViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(ReviewUiState())
@@ -34,7 +35,9 @@ class ReviewViewModel : ViewModel() {
                 Log.e("Firestore", "Error fetching reviews: ${exception.message}")
                 _uiState.value = ReviewUiState(errorMessage = exception.message)
             }
+
     }
+
     fun addReview(review: Review) {
         FirebaseFirestore.getInstance()
             .collection("reviews")
@@ -46,6 +49,28 @@ class ReviewViewModel : ViewModel() {
                 _uiState.value = _uiState.value.copy(errorMessage = "Failed to add review.")
             }
     }
+
+    fun sortByBest() {
+        val sortedReviews = _uiState.value.reviews.sortedByDescending { it.rating}
+        _uiState.value = _uiState.value.copy(reviews = sortedReviews)
+    }
+
+    fun sortByWorst() {
+        val sortedReviews = _uiState.value.reviews.sortedBy { it.rating}
+        _uiState.value = _uiState.value.copy(reviews = sortedReviews)
+    }
+
+    fun sortByNewest() {
+        val sortedReviews = _uiState.value.reviews.sortedByDescending { it.date}
+        _uiState.value = _uiState.value.copy(reviews = sortedReviews)
+    }
+
+    fun sortByOldest() {
+        val sortedReviews = _uiState.value.reviews.sortedBy{ it.date}
+        _uiState.value = _uiState.value.copy(reviews = sortedReviews)
+    }
+
+
 }
 
 data class ReviewUiState(
