@@ -53,6 +53,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.example.act.accounts.ProfileUpdateScreen
+import com.example.act.accounts.SigninScreen
+import com.example.act.accounts.SignupScreen
+import com.example.act.accounts.signupUser
+import com.example.act.screens.ProfileScreen
+import com.example.act.screens.ReviewScreen
+import com.example.act.screens.SupportScreen
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 //creating screens/routes of the app
@@ -87,3 +96,40 @@ val navItemList = listOf(
     ),
     NavItem(label = "Support", icon = Icons.Default.Info, screen = Screen.Assets)
 )
+
+@Composable
+fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
+    val navController = rememberNavController()
+
+    val context = LocalContext.current
+
+    NavHost(navController = navController,
+        startDestination = Screen.Login.route,
+        modifier = Modifier.padding()) {
+
+        composable(Screen.Profile.route) { ProfileScreen(navController) }
+        composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
+        composable(Screen.Support.route) { SupportScreen(navController) }
+        composable(Screen.Reviews.route) { ReviewScreen() }
+        composable(Screen.Login.route) {
+            SigninScreen(
+                navController = navController,
+                auth = auth
+            )
+        }
+        composable(Screen.SignUp.route) {
+            SignupScreen(
+                context =  context,
+                navController = navController,
+                onSignup = { email, password, name, date,
+                             onSignupSuccess ->
+                    signupUser(auth, firestore, context,
+                        email, password, name, date) { user ->
+                        onSignupSuccess(user)
+                        navController.navigate(Screen.Login.route)
+                    }
+                }
+            )
+        }
+    }
+}

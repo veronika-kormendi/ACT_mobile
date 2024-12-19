@@ -1,6 +1,7 @@
 package com.example.act.accounts
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -15,7 +16,9 @@ import androidx.navigation.NavController
 import com.example.act.R
 import com.example.act.Screen
 import com.example.act.data.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun SignupScreen(
@@ -69,4 +72,43 @@ fun SignupScreen(
             Text("Sign Up")
         }
     }
+}
+
+
+fun signupUser(
+    auth: FirebaseAuth, firestore: FirebaseFirestore,
+    context: Context, email: String, password: String, name: String,
+    date: FieldValue,
+    onSignupSuccess: (User) -> Unit
+) {
+    auth.createUserWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val user = auth.currentUser
+                user?.let {
+                    val newUser = User(it.uid, email, name, date)
+                    firestore.collection("users")
+                        .document(it.uid)
+                        .set(newUser)
+                        .addOnSuccessListener {
+                            onSignupSuccess(newUser)
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("MainActivity", "Error creating account", e)
+                            Toast.makeText(
+                                context,
+                                "Error saving user data",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
+                }
+            } else {
+                Toast.makeText(
+                    context,
+                    "${task.exception?.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 }

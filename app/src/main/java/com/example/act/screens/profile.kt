@@ -6,6 +6,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,45 +17,67 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-
+import com.example.act.navItemList
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFE3ECF1))
-            .padding(16.dp),
-        contentAlignment = Alignment.TopCenter
-    ) {
-        Column(
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            NavigationBar {
+                navItemList.forEachIndexed { index, navItem ->
+                    NavigationBarItem(
+                        selected = selectedIndex == index,
+                        onClick = {
+                            selectedIndex = index
+                            if (navController.currentDestination?.route != navItem.screen.route) {
+                                navController.navigate(navItem.screen.route) {
+                                    launchSingleTop = true // prevent multiple copies of the same destination
+                                    restoreState = true // restore state to previously selected item
+                                }
+                            }
+                        },
+                        label = { Text(text = navItem.label) },
+                        icon = { navItem.icon }
+                    )
+                }
+            }
+        },
+    ) { innerPadding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+                .background(Color(0xFFE3ECF1))
+                .padding(innerPadding)
+                .padding(16.dp),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Text(
-                text = "Welcome!",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF0F4C75),
-                modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            ProfileButton(text = "Support",
-                onClick = { navController.navigate("SupportScreen") })
-            Spacer(modifier = Modifier.height(8.dp))
-            ProfileButton(text = "Reviews",
-                onClick = {navController.navigate("ReviewScreen")})
-            Spacer(modifier = Modifier.height(8.dp))
-            ProfileButton(text = "Update",
-                onClick = {navController.navigate("UpdateProfileScreen")})
-
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Text(
+                    text = "Welcome!",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF0F4C75),
+                    modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                ProfileButton(text = "Support", onClick = { navController.navigate("SupportScreen") })
+                Spacer(modifier = Modifier.height(8.dp))
+                ProfileButton(text = "Reviews", onClick = { navController.navigate("ReviewScreen") })
+                Spacer(modifier = Modifier.height(8.dp))
+                ProfileButton(text = "Update", onClick = { navController.navigate("UpdateProfileScreen") })
+            }
         }
     }
 }
-
 @Composable
 fun ProfileButton(text: String, onClick: () -> Unit) {
     Button(
