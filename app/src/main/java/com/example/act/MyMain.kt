@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.act.accounts.ProfileUpdateScreen
+import com.example.act.accounts.ResetPasswordScreen
 import com.example.act.accounts.SigninScreen
 import com.example.act.accounts.SignupScreen
 import com.example.act.accounts.signupUser
@@ -40,6 +41,7 @@ sealed class Screen(val route: String){
     object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
     object Support : Screen("SupportScreen")
     object Reviews : Screen("ReviewScreen")
+    object Reset : Screen("ResetPassScreen")
     object PriceAlert : Screen("PriceAlertScreen")
     object Assets: Screen("AssetsScreen")
     object Profile: Screen("ProfileScreen")
@@ -99,8 +101,8 @@ fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
             startDestination = Screen.Login.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-
             composable(Screen.Profile.route) { ProfileScreen(navController) }
+            composable(Screen.Reset.route) { ResetPasswordScreen() }
             composable(Screen.AddReview.route) { CreateReviewScreen(navController) }
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
             composable(Screen.Support.route) { SupportScreen(navController) }

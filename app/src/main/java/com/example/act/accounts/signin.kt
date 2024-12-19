@@ -92,7 +92,13 @@ fun SigninScreen(navController: NavController, auth: FirebaseAuth) {
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-
+        Text(
+            text = "Forgot Password?",
+            fontSize = 14.sp,
+            modifier = Modifier.clickable { navController.navigate(Screen.Reset.route) }
+                .padding(vertical = 8.dp),
+            color = MaterialTheme.colorScheme.primary
+        )
         Text(
             text = "New? Make an account",
             fontSize = 14.sp,
