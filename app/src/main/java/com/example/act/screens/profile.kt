@@ -20,37 +20,11 @@ import androidx.navigation.NavController
 import com.example.act.navItemList
 @Composable
 fun ProfileScreen(navController: NavController) {
-    val context = LocalContext.current
-    var selectedIndex by remember { mutableStateOf(0) }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            NavigationBar {
-                navItemList.forEachIndexed { index, navItem ->
-                    NavigationBarItem(
-                        selected = selectedIndex == index,
-                        onClick = {
-                            selectedIndex = index
-                            if (navController.currentDestination?.route != navItem.screen.route) {
-                                navController.navigate(navItem.screen.route) {
-                                    launchSingleTop = true // prevent multiple copies of the same destination
-                                    restoreState = true // restore state to previously selected item
-                                }
-                            }
-                        },
-                        label = { Text(text = navItem.label) },
-                        icon = { navItem.icon }
-                    )
-                }
-            }
-        },
-    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFFE3ECF1))
-                .padding(innerPadding)
+
                 .padding(16.dp),
             contentAlignment = Alignment.TopCenter
         ) {
@@ -77,7 +51,7 @@ fun ProfileScreen(navController: NavController) {
             }
         }
     }
-}
+
 @Composable
 fun ProfileButton(text: String, onClick: () -> Unit) {
     Button(
