@@ -22,7 +22,6 @@ class ReviewViewModel : ViewModel() {
             .addOnSuccessListener { result ->
                 val reviews = result.map { document ->
                     Review(
-                        id = document.id,
                         name = document.getString("name") ?: "Anonymous",
                         rating = document.getLong("rating")?.toInt() ?: 3,
                         comment = document.getString("comment") ?: "No comment provided.",
@@ -36,6 +35,17 @@ class ReviewViewModel : ViewModel() {
                 _uiState.value = ReviewUiState(errorMessage = exception.message)
             }
     }
+    fun addReview(review: Review) {
+        FirebaseFirestore.getInstance()
+            .collection("reviews")
+            .add(review)
+            .addOnSuccessListener {
+                fetchReviews()
+            }
+            .addOnFailureListener {
+                _uiState.value = _uiState.value.copy(errorMessage = "Failed to add review.")
+            }
+    }
 }
 
 data class ReviewUiState(
@@ -45,7 +55,6 @@ data class ReviewUiState(
 )
 
 data class Review(
-    val id: String,
     val name: String,
     val rating: Int,
     val comment: String,

@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -20,7 +23,7 @@ import com.example.act.data.Review
 import com.example.act.data.ReviewViewModel
 
 @Composable
-fun ReviewScreen(viewModel: ReviewViewModel = viewModel()) {
+fun ReviewScreen(navController: NavController, viewModel: ReviewViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     when {
@@ -46,6 +49,24 @@ fun ReviewScreen(viewModel: ReviewViewModel = viewModel()) {
                     .background(Color(0xFFBBE1FA))
                     .padding(16.dp)
             ) {
+                Button(
+                    onClick = { navController.navigate("CreateReview") },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF3F51B5)),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                        .height(48.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(
+                        text = "Add Review",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
                 uiState.reviews.forEach { review ->
                     ReviewRow(review = review)
                 }

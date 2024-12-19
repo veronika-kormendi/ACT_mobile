@@ -1,9 +1,6 @@
 package com.example.act
 
-import android.media.MediaPlayer
-import android.system.Os.remove
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -28,6 +25,7 @@ import com.example.act.accounts.ProfileUpdateScreen
 import com.example.act.accounts.SigninScreen
 import com.example.act.accounts.SignupScreen
 import com.example.act.accounts.signupUser
+import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportScreen
@@ -37,9 +35,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 //creating screens/routes of the app
 sealed class Screen(val route: String){
-    object Welcome : Screen("WelcomeScreen") // login
     object SignUp : Screen("SignUpScreen") // for account registration
-    object LoggedIn : Screen("UserAccountScreen")
+    object AddReview : Screen("CreateReview")
     object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
     object Support : Screen("SupportScreen")
     object Reviews : Screen("ReviewScreen")
@@ -104,13 +101,14 @@ fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
         ) {
 
             composable(Screen.Profile.route) { ProfileScreen(navController) }
+            composable(Screen.AddReview.route) { CreateReviewScreen(navController) }
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
             composable(Screen.Support.route) { SupportScreen(navController) }
-            composable(Screen.Reviews.route) { ReviewScreen() }
+            composable(Screen.Reviews.route) { ReviewScreen(navController) }
             composable(Screen.Login.route) {
                 SigninScreen(
                     navController = navController,
-                    auth = auth
+                    auth = auth,
                 )
             }
             composable(Screen.SignUp.route) {
