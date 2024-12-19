@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.act.R
+import com.example.act.Screen
 
 var phoneNumber = "+35316971368"
 
@@ -83,7 +84,7 @@ fun SupportScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
-                onClick = {  },
+                onClick = { navController.navigate("SupportFormScreen") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
                 modifier = Modifier
                     .fillMaxWidth()

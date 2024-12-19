@@ -32,11 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.act.R
 
 @Composable
 fun ResetPasswordScreen() {
@@ -70,7 +67,6 @@ fun ResetPasswordScreen() {
                 color = Color(0xFF0F4C75),
                 modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
             )
-
 
             Spacer(modifier = Modifier.height(40.dp))
             TextField(

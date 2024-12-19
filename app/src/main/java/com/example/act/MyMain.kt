@@ -29,6 +29,7 @@ import com.example.act.accounts.signupUser
 import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
 import com.example.act.screens.ReviewScreen
+import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -42,6 +43,7 @@ sealed class Screen(val route: String){
     object Support : Screen("SupportScreen")
     object Reviews : Screen("ReviewScreen")
     object Reset : Screen("ResetPassScreen")
+    object SupportForm : Screen("SupportFormScreen")
     object PriceAlert : Screen("PriceAlertScreen")
     object Assets: Screen("AssetsScreen")
     object Profile: Screen("ProfileScreen")
@@ -64,7 +66,7 @@ val navItemList = listOf(
         icon = Icons.Default.ShoppingCart,
         screen = Screen.Assets
     ),
-    NavItem(label = "Support", icon = Icons.Default.Info, screen = Screen.Assets)
+    NavItem(label = "Support", icon = Icons.Default.Info, screen = Screen.Support)
 )
 
 @Composable
@@ -98,10 +100,11 @@ fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Login.route,
+            startDestination = Screen.SupportForm.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Profile.route) { ProfileScreen(navController) }
+            composable(Screen.SupportForm.route) { SupportFormScreen() }
             composable(Screen.Reset.route) { ResetPasswordScreen() }
             composable(Screen.AddReview.route) { CreateReviewScreen(navController) }
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
