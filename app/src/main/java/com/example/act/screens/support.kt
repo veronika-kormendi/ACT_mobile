@@ -100,6 +100,25 @@ fun SupportScreen(navController: NavController) {
                 )
             }
 
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Button(
+                onClick = { navController.navigate("FAQScreen") },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 32.dp)
+                    .height(48.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    text = "FAQs",
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White
+                )
+            }
         }
     }
 }

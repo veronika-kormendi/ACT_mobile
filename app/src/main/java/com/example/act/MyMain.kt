@@ -28,6 +28,7 @@ import com.example.act.accounts.SignupScreen
 import com.example.act.accounts.signupUser
 import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
+import com.example.act.screens.QuestionScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
@@ -46,6 +47,7 @@ sealed class Screen(val route: String){
     object SupportForm : Screen("SupportFormScreen")
     object PriceAlert : Screen("PriceAlertScreen")
     object Assets: Screen("AssetsScreen")
+    object Questions: Screen("FAQScreen")
     object Profile: Screen("ProfileScreen")
     object Update: Screen("UpdateProfileScreen")
     object Login : Screen("SigninScreen")
@@ -100,9 +102,10 @@ fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.SupportForm.route,
+            startDestination = Screen.Login.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.Questions.route) { QuestionScreen() }
             composable(Screen.Profile.route) { ProfileScreen(navController) }
             composable(Screen.SupportForm.route) { SupportFormScreen() }
             composable(Screen.Reset.route) { ResetPasswordScreen() }
