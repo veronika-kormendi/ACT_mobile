@@ -51,6 +51,9 @@ android {
 }
 
 dependencies {
+    implementation("com.google.android.gms:play-services-wallet:19.3.0-beta01")
+    implementation("com.google.pay.button:compose-pay-button:0.1.3")
+    implementation("com.google.android.gms:play-services-wallet:18.0.0")
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation(libs.androidx.core.ktx)
@@ -64,12 +67,14 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.volley)
     implementation(libs.androidx.runner)
-    //implementation("io.coil-kt:coil-compose:2.7.0")
+    //implementation(libs.compose.pay.button)
     implementation(libs.coil.compose)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.auth)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation("com.google.android.gms:play-services-wallet:19.4.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

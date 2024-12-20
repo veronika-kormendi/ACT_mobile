@@ -36,7 +36,6 @@ import com.example.act.data.ReviewViewModel
 fun ReviewScreen(navController: NavController, viewModel: ReviewViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("Sort by Rating") }
     var reviews by remember { mutableStateOf(uiState.reviews) }
 
     when {

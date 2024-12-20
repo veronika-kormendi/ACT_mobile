@@ -1,5 +1,8 @@
 package com.example.act.screens
 
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,12 +17,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.act.R
 import com.example.act.navItemList
+import com.example.act.payment.CheckoutActivity
+import com.google.android.gms.wallet.PaymentsClient
+import com.google.android.gms.wallet.Wallet
+import com.google.android.gms.wallet.WalletConstants
+
 @Composable
 fun ProfileScreen(navController: NavController) {
+    val context = LocalContext.current
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -48,6 +59,15 @@ fun ProfileScreen(navController: NavController) {
                 ProfileButton(text = "Reviews", onClick = { navController.navigate("ReviewScreen") })
                 Spacer(modifier = Modifier.height(8.dp))
                 ProfileButton(text = "Update", onClick = { navController.navigate("UpdateProfileScreen") })
+                Spacer(modifier = Modifier.height(8.dp))
+                ProfileButton(
+                    text = "Act AI Premium",
+                    onClick = {
+                        val intent = Intent(context as? Activity, CheckoutActivity::class.java)
+                        context.startActivity(intent)
+                    }
+                )
+
             }
         }
     }
@@ -71,3 +91,6 @@ fun ProfileButton(text: String, onClick: () -> Unit) {
         )
     }
 }
+
+
+

@@ -1,5 +1,10 @@
 package com.example.act
 
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -21,17 +26,23 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.act.accounts.ProfileUpdateScreen
 import com.example.act.accounts.ResetPasswordScreen
 import com.example.act.accounts.SigninScreen
 import com.example.act.accounts.SignupScreen
 import com.example.act.accounts.signupUser
+import com.example.act.payment.CheckoutViewModel
+import com.example.act.payment.PaymentUiState
+import com.example.act.payment.PremiumAIScreen
 import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
 import com.example.act.screens.QuestionScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
+import com.google.android.gms.common.api.CommonStatusCodes
+import com.google.android.gms.wallet.contract.TaskResultContracts.GetPaymentDataResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
