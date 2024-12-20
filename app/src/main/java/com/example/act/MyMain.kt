@@ -119,7 +119,6 @@ fun MainFunction() {
             composable(Screen.PremiumChat.route) { ChatPremAI() }
             composable(Screen.Profile.route) { ProfileScreen(navController) }
             composable(Screen.SupportForm.route) { SupportFormScreen() }
-            composable(Screen.Reset.route) { ResetPasswordScreen() }
             composable(Screen.AddReview.route) { CreateReviewScreen(navController) }
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
             composable(Screen.Support.route) { SupportScreen(navController) }

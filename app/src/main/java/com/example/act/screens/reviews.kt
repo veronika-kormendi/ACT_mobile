@@ -93,7 +93,7 @@ fun ReviewScreen(navController: NavController, viewModel: ReviewViewModel = view
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Text(
-                                text = "Add",
+                                text = "Create",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.White

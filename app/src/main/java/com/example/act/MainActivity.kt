@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.act.accounts.ResetPasswordScreen
 import com.example.act.accounts.SigninScreen
 import com.example.act.accounts.SignupScreen
 import com.example.act.accounts.signupUser
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
                             }
                         )
                     }
+                    composable(Screen.Reset.route) { ResetPasswordScreen() }
                     composable("ProfileScreen") {
                         MainFunction()
                     }
