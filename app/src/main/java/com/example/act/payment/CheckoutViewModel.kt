@@ -30,7 +30,6 @@ class CheckoutViewModel(application: Application) : AndroidViewModel(application
         MutableStateFlow(PaymentUiState.NotStarted)
     val paymentUiState: StateFlow<PaymentUiState> = _paymentUiState.asStateFlow()
 
-    // A client for interacting with the Google Pay API.
     private val paymentsClient: PaymentsClient = PaymentsUtil.createPaymentsClient(application)
 
     init {
