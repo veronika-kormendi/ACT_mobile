@@ -2,75 +2,74 @@ package com.example.act.screens
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.act.R
-import com.example.act.navItemList
 import com.example.act.payment.CheckoutActivity
-import com.google.android.gms.wallet.PaymentsClient
-import com.google.android.gms.wallet.Wallet
-import com.google.android.gms.wallet.WalletConstants
 
 @Composable
 fun ProfileScreen(navController: NavController) {
     val context = LocalContext.current
-        Box(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFF0F4C75), Color(0xFFE3ECF1))
+                )
+            )
+            .padding(16.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFE3ECF1))
-
-                .padding(16.dp),
-            contentAlignment = Alignment.TopCenter
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Text(
-                    text = "Welcome!",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0F4C75),
-                    modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(20.dp))
-                ProfileButton(text = "Support", onClick = { navController.navigate("SupportScreen") })
-                Spacer(modifier = Modifier.height(8.dp))
-                ProfileButton(text = "Reviews", onClick = { navController.navigate("ReviewScreen") })
-                Spacer(modifier = Modifier.height(8.dp))
-                ProfileButton(text = "Update", onClick = { navController.navigate("UpdateProfileScreen") })
-                Spacer(modifier = Modifier.height(8.dp))
-                ProfileButton(
-                    text = "Act AI Premium",
-                    onClick = {
-                        val intent = Intent(context as? Activity, CheckoutActivity::class.java)
-                        context.startActivity(intent)
-                    }
-                )
 
-            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Welcome!",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+            ProfileButton(text = "Support", onClick = { navController.navigate("SupportScreen") })
+            Spacer(modifier = Modifier.height(12.dp))
+            ProfileButton(text = "Reviews", onClick = { navController.navigate("ReviewScreen") })
+            Spacer(modifier = Modifier.height(12.dp))
+            ProfileButton(
+                text = "Update",
+                onClick = { navController.navigate("UpdateProfileScreen") })
+            Spacer(modifier = Modifier.height(12.dp))
+            ProfileButton(
+                text = "Act AI Premium",
+                onClick = {
+                    val intent = Intent(context as? Activity, CheckoutActivity::class.java)
+                    context.startActivity(intent)
+                }
+            )
+
         }
     }
+}
+
 
 @Composable
 fun ProfileButton(text: String, onClick: () -> Unit) {
@@ -79,18 +78,28 @@ fun ProfileButton(text: String, onClick: () -> Unit) {
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFBBE1FA)),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 32.dp)
-            .height(48.dp),
+            .padding(horizontal = 16.dp)
+            .height(56.dp),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
         shape = MaterialTheme.shapes.medium
     ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-            color = Color.White
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
+                color = Color.White
+            )
+        }
     }
 }
+
+
+
 
 
 
