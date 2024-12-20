@@ -4,31 +4,55 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.act.accounts.ProfileUpdateScreen
+import com.example.act.accounts.ResetPasswordScreen
+import com.example.act.accounts.SigninScreen
+import com.example.act.accounts.SignupScreen
+import com.example.act.accounts.signupUser
+import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
-import com.example.act.screens.SignUpScreen
+import com.example.act.screens.QuestionScreen
+import com.example.act.screens.ReviewScreen
+import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
-import com.example.act.screens.WelcomeScreen
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 //creating screens/routes of the app
 sealed class Screen(val route: String){
-    object Welcome : Screen("WelcomeScreen") // login
     object SignUp : Screen("SignUpScreen") // for account registration
-    object LoggedIn : Screen("UserAccountScreen")
+    object AddReview : Screen("CreateReview")
     object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
     object Support : Screen("SupportScreen")
-    object Feedback : Screen("RatingsAndReviewScreen")
+    object Reviews : Screen("ReviewScreen")
+    object Reset : Screen("ResetPassScreen")
+    object SupportForm : Screen("SupportFormScreen")
     object PriceAlert : Screen("PriceAlertScreen")
     object Assets: Screen("AssetsScreen")
+    object Questions: Screen("FAQScreen")
     object Profile: Screen("ProfileScreen")
-
-
+    object Update: Screen("UpdateProfileScreen")
+    object Login : Screen("SigninScreen")
 }
+
 // navigation items for the bottom bar
 data class NavItem(
     var label: String,
@@ -36,22 +60,81 @@ data class NavItem(
     val screen: Screen
 )
 
-@Composable
-fun MyMain(){
-    //init navigation controller
-    val navController = rememberNavController()
-    // list of navigation items
-    val navItemList = listOf(
-        NavItem(label = "Account", icon = Icons.Default.Home, screen = Screen.LoggedIn),
-        NavItem(label = "Assets", icon = Icons.Default.ShoppingCart, screen = Screen.Assets),
-        NavItem(label = "Support", icon = Icons.Default.Info, screen = Screen.Assets)
-    )
-    NavHost(navController= navController, startDestination = Screen.Welcome.route){
-        composable(Screen.Welcome.route) { WelcomeScreen(navController) }
-        composable(Screen.SignUp.route) { SignUpScreen(navController) }
-        //composable(Screen.LoggedIn.route) { LoggedInScreen(navController) }
-        composable(Screen.Profile.route) { ProfileScreen(navController) }
-        composable(Screen.Support.route) { SupportScreen(navController) }
-    }
+// list of navigation items
+val navItemList = listOf(
+    NavItem(label = "Account", icon = Icons.Default.Home, screen = Screen.Profile),
+    NavItem(
+        label = "Assets",
+        icon = Icons.Default.ShoppingCart,
+        screen = Screen.Assets
+    ),
+    NavItem(label = "Support", icon = Icons.Default.Info, screen = Screen.Support)
+)
 
+@Composable
+fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
+    val navController = rememberNavController()
+    var selectedIndex by remember { mutableStateOf(0) }
+    val context = LocalContext.current
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            NavigationBar {
+                navItemList.forEachIndexed { index, navItem ->
+                    NavigationBarItem(
+                        selected = selectedIndex == index,
+                        onClick = {
+                            selectedIndex = index
+                            if (navController.currentDestination?.route != navItem.screen.route) {
+                                navController.navigate(navItem.screen.route) {
+                                    launchSingleTop =
+                                        true // prevent multiple copies of the same destination
+                                    restoreState = true // restore state to previously selected item
+                                }
+                            }
+                        },
+                        label = { Text(text = navItem.label) },
+                        icon = { navItem.icon }
+                    )
+                }
+            }
+        },
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Login.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(Screen.Questions.route) { QuestionScreen() }
+            composable(Screen.Profile.route) { ProfileScreen(navController) }
+            composable(Screen.SupportForm.route) { SupportFormScreen() }
+            composable(Screen.Reset.route) { ResetPasswordScreen() }
+            composable(Screen.AddReview.route) { CreateReviewScreen(navController) }
+            composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
+            composable(Screen.Support.route) { SupportScreen(navController) }
+            composable(Screen.Reviews.route) { ReviewScreen(navController) }
+            composable(Screen.Login.route) {
+                SigninScreen(
+                    navController = navController,
+                    auth = auth,
+                )
+            }
+            composable(Screen.SignUp.route) {
+                SignupScreen(
+                    context = context,
+                    navController = navController,
+                    onSignup = { email, password, name, date,
+                                 onSignupSuccess ->
+                        signupUser(
+                            auth, firestore, context,
+                            email, password, name, date
+                        ) { user ->
+                            onSignupSuccess(user)
+                            navController.navigate(Screen.Login.route)
+                        }
+                    }
+                )
+            }
+        }
+    }
 }

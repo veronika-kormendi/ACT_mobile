@@ -1,67 +1,55 @@
 package com.example.act
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.act.accounts.ProfileUpdateScreen
+import com.example.act.accounts.SigninScreen
+import com.example.act.accounts.SignupScreen
+import com.example.act.data.User
+import com.example.act.screens.ProfileScreen
+import com.example.act.screens.ReviewScreen
+import com.example.act.screens.SupportScreen
 import com.example.act.ui.theme.ACTTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
+
 
 class MainActivity : ComponentActivity() {
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
         setContent {
             ACTTheme {
-                    MyMain()
-                }
+                MainFunction(auth, firestore)
+
             }
         }
     }
-
-////creating screens/routes of the app
-//sealed class Screen(val route: String){
-//    object Welcome : Screen("WelcomeScreen") // login
-//    object SignUp : Screen("SignUpScreen") // for account registration
-//    object LoggedIn : Screen("UserAccountScreen")
-//    object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
-//    object Help : Screen("HelpScreen")
-//    object Feedback : Screen("RatingsAndReviewScreen")
-//    object PriceAlert : Screen("PriceAlertScreen")
-//    object Assets: Screen("AssetsScreen")
-//
-//
-//}
-//// navigation items for the bottom bar
-//data class NavItem(
-//    var label: String,
-//    val icon: ImageVector,
-//    val screen: Screen
-//)
-
-//@Composable
-//fun MyMain(){
-//    //init navigation controller
-//    val navContoroller = rememberNavController()
-//    // list of navigation items
-//    val navItemList = listOf(
-//        NavItem(label = "Account", icon = Icons.Default.Home, screen = Screen.LoggedIn),
-//        NavItem(label = "Assets", icon = Icons.Default.ShoppingCart, screen = Screen.Assets),
-//        NavItem(label = "Help", icon = Icons.Default.Info, screen = Screen.Assets)
-//    )
-//}
+}

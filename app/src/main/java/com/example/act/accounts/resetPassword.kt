@@ -1,8 +1,12 @@
-package com.example.act.screens
+package com.example.act.accounts
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.Image
+import android.content.ContentValues.TAG
+import android.util.Log
+import android.widget.Toast
+import androidx.compose.material3.TextField
+import com.example.act.screens.openDialer
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,26 +24,25 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.act.R
-import com.example.act.Screen
-
-var phoneNumber = "+35316971368"
 
 @Composable
-fun SupportScreen(navController: NavController) {
+fun ResetPasswordScreen() {
     val context = LocalContext.current
+    var emailAddress by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFBBE1FA))
+            .background(Color(0xFFFCFDFD))
             .padding(16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
@@ -51,60 +54,39 @@ fun SupportScreen(navController: NavController) {
             verticalArrangement = Arrangement.Top
         ) {
             Text(
-                text = "Support Screen",
+                text = "Reset Password",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF0F4C75),
                 modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
             )
-            Image(
-                painter = painterResource(id = R.drawable.support),
-                contentDescription = "Logo",
-                modifier = Modifier.size(300.dp)
+            Text(
+                text = "Enter your email below. If the email is linked to a" +
+                        " valid account then you will be sent a password reset email.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF0F4C75),
+                modifier = Modifier.padding(top = 32.dp, bottom = 16.dp)
             )
 
             Spacer(modifier = Modifier.height(40.dp))
-
-            Button(
-                onClick = { openDialer(context, phoneNumber) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-                    .height(48.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text(
-                    text = "Call Support",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
-            }
-            Spacer(modifier = Modifier.height(30.dp))
-
-            Button(
-                onClick = { navController.navigate("SupportFormScreen") },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp)
-                    .height(48.dp),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text(
-                    text = "Write to Support",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
-                )
-            }
+            TextField(
+                value = emailAddress,
+                onValueChange = { emailAddress = it },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
 
             Spacer(modifier = Modifier.height(30.dp))
 
             Button(
-                onClick = { navController.navigate("FAQScreen") },
+                onClick = {
+                    Firebase.auth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                        }
+                    } },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF60D5F2)),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,17 +95,13 @@ fun SupportScreen(navController: NavController) {
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    text = "FAQs",
+                    text = "Reset Password",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
                     color = Color.White
                 )
             }
+
         }
     }
-}
-
-fun openDialer(context: android.content.Context, phoneNumber: String) {
-    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phoneNumber"))
-    context.startActivity(intent)
 }
