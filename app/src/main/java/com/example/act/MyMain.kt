@@ -34,6 +34,7 @@ import com.example.act.accounts.signupUser
 import com.example.act.payment.PremiumAIScreen
 import com.example.act.screens.ChatPremAI
 import com.example.act.screens.CreateReviewScreen
+import com.example.act.screens.PriceAlertScreen
 import com.example.act.screens.ProfileScreen
 import com.example.act.screens.QuestionScreen
 import com.example.act.screens.ReviewScreen
@@ -123,6 +124,7 @@ fun MainFunction() {
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
             composable(Screen.Support.route) { SupportScreen(navController) }
             composable(Screen.Reviews.route) { ReviewScreen(navController) }
+            composable(Screen.PriceAlert.route) { PriceAlertScreen() }
 
         }
     }
