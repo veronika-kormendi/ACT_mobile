@@ -36,7 +36,6 @@ import com.example.act.data.ReviewViewModel
 fun ReviewScreen(navController: NavController, viewModel: ReviewViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("Sort by Rating") }
     var reviews by remember { mutableStateOf(uiState.reviews) }
 
     when {
@@ -94,7 +93,7 @@ fun ReviewScreen(navController: NavController, viewModel: ReviewViewModel = view
                             shape = MaterialTheme.shapes.medium
                         ) {
                             Text(
-                                text = "Add Review",
+                                text = "Add",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Medium,
                                 color = Color.White

@@ -1,5 +1,10 @@
 package com.example.act
 
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -26,6 +31,8 @@ import com.example.act.accounts.ResetPasswordScreen
 import com.example.act.accounts.SigninScreen
 import com.example.act.accounts.SignupScreen
 import com.example.act.accounts.signupUser
+import com.example.act.payment.PremiumAIScreen
+import com.example.act.screens.ChatPremAI
 import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
 import com.example.act.screens.QuestionScreen
@@ -37,7 +44,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 
 //creating screens/routes of the app
-sealed class Screen(val route: String){
+sealed class Screen(val route: String) {
     object SignUp : Screen("SignUpScreen") // for account registration
     object AddReview : Screen("CreateReview")
     object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
@@ -46,10 +53,11 @@ sealed class Screen(val route: String){
     object Reset : Screen("ResetPassScreen")
     object SupportForm : Screen("SupportFormScreen")
     object PriceAlert : Screen("PriceAlertScreen")
-    object Assets: Screen("AssetsScreen")
-    object Questions: Screen("FAQScreen")
-    object Profile: Screen("ProfileScreen")
-    object Update: Screen("UpdateProfileScreen")
+    object Assets : Screen("AssetsScreen")
+    object Questions : Screen("FAQScreen")
+    object PremiumChat : Screen("PremiumAI")
+    object Profile : Screen("ProfileScreen")
+    object Update : Screen("UpdateProfileScreen")
     object Login : Screen("SigninScreen")
 }
 
@@ -72,69 +80,51 @@ val navItemList = listOf(
 )
 
 @Composable
-fun MainFunction(auth: FirebaseAuth, firestore: FirebaseFirestore) {
+fun MainFunction() {
     val navController = rememberNavController()
     var selectedIndex by remember { mutableStateOf(0) }
-    val context = LocalContext.current
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
-                navItemList.forEachIndexed { index, navItem ->
-                    NavigationBarItem(
-                        selected = selectedIndex == index,
-                        onClick = {
-                            selectedIndex = index
-                            if (navController.currentDestination?.route != navItem.screen.route) {
-                                navController.navigate(navItem.screen.route) {
-                                    launchSingleTop =
-                                        true // prevent multiple copies of the same destination
-                                    restoreState = true // restore state to previously selected item
+                NavigationBar {
+                    navItemList.forEachIndexed { index, navItem ->
+                        NavigationBarItem(
+                            selected = selectedIndex == index,
+                            onClick = {
+                                selectedIndex = index
+                                if (navController.currentDestination?.route != navItem.screen.route) {
+                                    navController.navigate(navItem.screen.route) {
+                                        launchSingleTop =
+                                            true // prevent multiple copies of the same destination
+                                        restoreState =
+                                            true // restore state to previously selected item
+                                    }
                                 }
-                            }
-                        },
-                        label = { Text(text = navItem.label) },
-                        icon = { navItem.icon }
-                    )
+                            },
+                            label = { Text(text = navItem.label) },
+                            icon = { navItem.icon }
+                        )
+                    }
                 }
-            }
+
         },
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Login.route,
+            startDestination = Screen.Profile.route,
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Questions.route) { QuestionScreen() }
+            composable(Screen.PremiumChat.route) { ChatPremAI() }
             composable(Screen.Profile.route) { ProfileScreen(navController) }
             composable(Screen.SupportForm.route) { SupportFormScreen() }
-            composable(Screen.Reset.route) { ResetPasswordScreen() }
             composable(Screen.AddReview.route) { CreateReviewScreen(navController) }
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
             composable(Screen.Support.route) { SupportScreen(navController) }
             composable(Screen.Reviews.route) { ReviewScreen(navController) }
-            composable(Screen.Login.route) {
-                SigninScreen(
-                    navController = navController,
-                    auth = auth,
-                )
-            }
-            composable(Screen.SignUp.route) {
-                SignupScreen(
-                    context = context,
-                    navController = navController,
-                    onSignup = { email, password, name, date,
-                                 onSignupSuccess ->
-                        signupUser(
-                            auth, firestore, context,
-                            email, password, name, date
-                        ) { user ->
-                            onSignupSuccess(user)
-                            navController.navigate(Screen.Login.route)
-                        }
-                    }
-                )
-            }
+
         }
     }
 }
+
