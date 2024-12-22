@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ACT"
 include(":app")
- 
+
