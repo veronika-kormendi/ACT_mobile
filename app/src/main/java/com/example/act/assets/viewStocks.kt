@@ -38,15 +38,14 @@ import java.net.URL
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewStock(navController: NavController){
-    val cryptoList = assetConstants.STOCKS
-
+    val stockList = assetConstants.STOCKS
     Scaffold(topBar = {
         TopAppBar(title = { Text("Stock Assets") })
     }) {
         LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {
-            items(cryptoList) { stock ->
+            items(stockList) { stock ->
                 StockItem(stock = stock) {
                     navController.navigate("stockDetails/$stock")
                 }
