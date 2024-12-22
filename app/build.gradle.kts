@@ -5,6 +5,7 @@ plugins {
 
 }
 
+
 android {
     namespace = "com.example.act"
     compileSdk = 35
@@ -77,9 +78,10 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation("com.google.android.gms:play-services-wallet:19.4.0")
     implementation("com.google.android.gms:play-services-identity:18.0.1")
-    implementation("com.google.android.gms:play-services-auth:20.6.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.google.firebase:firebase-auth-ktx:23.1.0")
     implementation("androidx.media3:media3-common-ktx:1.5.1")
+    implementation("com.google.firebase:firebase-auth:23.1.0")
 
 
 
@@ -92,4 +94,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+
+
 }
+
+//apply("com.google.gms.google-services")
