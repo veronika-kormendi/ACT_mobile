@@ -1,10 +1,5 @@
 package com.example.act
 
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -23,15 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.act.accounts.ProfileUpdateScreen
-import com.example.act.accounts.ResetPasswordScreen
-import com.example.act.accounts.SigninScreen
-import com.example.act.accounts.SignupScreen
-import com.example.act.accounts.signupUser
-import com.example.act.payment.PremiumAIScreen
+import com.example.act.assets.CryptoDetails
+import com.example.act.assets.StockDetails
+import com.example.act.assets.ViewCrypto
+import com.example.act.assets.ViewStock
 import com.example.act.screens.ChatPremAI
 import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
@@ -39,8 +32,6 @@ import com.example.act.screens.QuestionScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 //creating screens/routes of the app
@@ -115,6 +106,15 @@ fun MainFunction() {
             startDestination = Screen.Profile.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable("cryptoDetails/{symbol}") { backStackEntry ->
+                val symbol = backStackEntry.arguments?.getString("symbol") ?: ""
+                CryptoDetails(symbol)
+            }
+            composable("stockDetails/{symbol}") { backStackEntry ->
+                val symbol = backStackEntry.arguments?.getString("symbol") ?: ""
+                StockDetails(symbol)
+            }
+            composable(Screen.Assets.route) { ViewStock(navController) }
             composable(Screen.Questions.route) { QuestionScreen() }
             composable(Screen.PremiumChat.route) { ChatPremAI() }
             composable(Screen.Profile.route) { ProfileScreen(navController) }

@@ -51,6 +51,8 @@ android {
 }
 
 dependencies {
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.android.gms:play-services-wallet:19.3.0-beta01")
     implementation("com.google.pay.button:compose-pay-button:0.1.3")
     implementation("com.google.android.gms:play-services-wallet:18.0.0")
