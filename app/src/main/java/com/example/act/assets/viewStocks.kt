@@ -31,11 +31,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.act.constants.assetConstants
+import com.example.act.screens.fetchAIStatus
 import com.google.common.reflect.TypeToken
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -91,6 +94,7 @@ fun StockDetails(symbol: String) {
     val inPortfolio = remember { mutableStateOf(false) }
     val ownedQuantity = remember { mutableStateOf<Double?>(null) }
     val boughtPrice = remember { mutableStateOf<Double?>(null) }
+    val aiEnabled = remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Fetch data using LaunchedEffect
@@ -102,6 +106,9 @@ fun StockDetails(symbol: String) {
                 getStockDetails(symbol, context) { quantity, price ->
                     ownedQuantity.value = quantity
                     boughtPrice.value = price
+                }
+                fetchAIStatus { result ->
+                    aiEnabled.value = result
                 }
             }
         } catch (e: Exception) {
@@ -178,6 +185,7 @@ fun StockDetails(symbol: String) {
                     ) {
                         Text(if (inPortfolio.value) "Remove from Portfolio" else "Add to Portfolio")
                     }
+
                 } else {
                     Text("No data available for $symbol")
                 }
@@ -186,6 +194,45 @@ fun StockDetails(symbol: String) {
     }
     }
 
+fun callStockAIApi() {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val url = URL("https://aiengine-fw62.onrender.com/analyze_stock")
+            val connection = url.openConnection() as HttpURLConnection
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/json")
+            connection.doOutput = true
+
+            // Prepare the request body
+            val jsonBody = JSONObject()
+            jsonBody.put("ticker_symbol", "AAPL")
+
+            // Write the request body
+            val outputStream = OutputStreamWriter(connection.outputStream)
+            outputStream.write(jsonBody.toString())
+            outputStream.flush()
+
+            // Read the response
+            val responseCode = connection.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val response = connection.inputStream.bufferedReader().use { it.readText() }
+
+                val gson = Gson()
+                val stockResponse = gson.fromJson(response, StockAnalysis::class.java)
+
+                // Access the parsed data
+                println("Ticker: ${stockResponse.ticker_symbol}")
+                println("Analysis: ${stockResponse.analysis}")
+            } else {
+                println("Error: ${connection.responseCode}")
+            }
+
+            connection.disconnect()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+}
 suspend fun callStockApi(symbol: String): Map<String, StockData> {
     return withContext(Dispatchers.IO) {
         val url = URL("https://yfianance-api-904c5fa45cd2.herokuapp.com/get_stock_data")
