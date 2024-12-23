@@ -58,15 +58,16 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ViewCrypto(navController: NavController){
     val cryptoList = assetConstants.CRYPTO
-
-    Scaffold(topBar = {
-        TopAppBar(title = { Text("Cryptocurrencies") })
-    }) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFBBE1FA))
+            .padding(16.dp)
+    ){
+        Text(text = "Crypto Currencies")
         LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {

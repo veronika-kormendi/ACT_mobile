@@ -63,9 +63,13 @@ import java.net.URL
 @Composable
 fun ViewStock(navController: NavController){
     val stockList = assetConstants.STOCKS
-    Scaffold(topBar = {
-        TopAppBar(title = { Text("Stock Assets") })
-    }) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFBBE1FA))
+            .padding(16.dp)
+    ){
+        Text(text = "Stock Assets")
         LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {
