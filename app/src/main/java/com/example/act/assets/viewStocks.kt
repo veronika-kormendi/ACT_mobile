@@ -1,6 +1,8 @@
 package com.example.act.assets
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,21 +12,28 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.act.constants.assetConstants
 import com.google.common.reflect.TypeToken
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -73,13 +82,18 @@ fun StockItem(stock: String, onClick: () -> Unit) {
 @Composable
 fun StockDetails(symbol: String) {
     // State to hold the API data
-    val cryptoData = remember { mutableStateOf<Map<String, StockData>?>(null) }
+    val stockData = remember { mutableStateOf<Map<String, StockData>?>(null) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
+    // State to hold quantity input
+    val quantity = remember { mutableStateOf("") }
+    val inPortfolio = remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     // Fetch data using LaunchedEffect
     LaunchedEffect(symbol) {
         try {
-            cryptoData.value = callStockApi(symbol)
+            stockData.value = callStockApi(symbol)
+            inPortfolio.value = checkIfStockInPortfolio(symbol)
         } catch (e: Exception) {
             errorMessage.value = "Failed to fetch data: ${e.message}"
         }
@@ -103,25 +117,57 @@ fun StockDetails(symbol: String) {
                     color = MaterialTheme.colorScheme.error
                 )
             }
-            cryptoData.value == null -> {
+            stockData.value == null -> {
                 CircularProgressIndicator()
             }
             else -> {
-                val data = cryptoData.value?.get(symbol)
+                val data = stockData.value?.get(symbol)
                 if (data != null) {
                     Text("Open: ${data.Open}")
                     Text("High: ${data.High}")
                     Text("Low: ${data.Low}")
                     Text("Close: ${data.Close}")
                     Text("Volume: ${data.Volume}")
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    TextField(
+                        value = quantity.value,
+                        onValueChange = { quantity.value = it },
+                        label = { Text("Quantity to buy:") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            if (inPortfolio.value) {
+                                removeStockFromPortfolio(symbol, context)
+                                inPortfolio.value = false
+                            } else {
+                                val qty = quantity.value.toDoubleOrNull()
+                                if (qty != null && qty > 0) {
+                                    addStockToPortfolio(
+                                        symbol = symbol,
+                                        quantity = qty,
+                                        price = data.Close,
+                                        context = context
+                                    )
+                                    inPortfolio.value = true
+                                } else {
+                                    Toast.makeText(context, "Invalid quantity", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        }
+                    ) {
+                        Text(if (inPortfolio.value) "Remove from Portfolio" else "Add to Portfolio")
+                    }
                 } else {
                     Text("No data available for $symbol")
                 }
             }
         }
     }
-
-}
+    }
 
 suspend fun callStockApi(symbol: String): Map<String, StockData> {
     return withContext(Dispatchers.IO) {
@@ -154,4 +200,84 @@ suspend fun callStockApi(symbol: String): Map<String, StockData> {
             connection.disconnect()
         }
     }
+}
+
+fun addStockToPortfolio(symbol: String, quantity: Double, price: Double, context: Context) {
+    val db = FirebaseFirestore.getInstance()
+    val userID = FirebaseAuth.getInstance().currentUser?.uid
+
+    val newStockAsset = mapOf(
+        "symbol" to symbol,
+        "quantity" to quantity,
+        "price" to price
+    )
+
+    val stockAssetsRef = db.collection("users")
+        .document(userID ?: "")
+        .collection("portfolio")
+        .document("stockAssets")
+
+    stockAssetsRef.collection("assets")
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            if (querySnapshot.size() < 10) {
+                stockAssetsRef.collection("assets")
+                    .add(newStockAsset)
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "$symbol added to portfolio", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Error adding stock: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            } else {
+                Toast.makeText(context, "Cannot add more than 10 stock assets", Toast.LENGTH_SHORT).show()
+            }
+        }
+}
+fun removeStockFromPortfolio(symbol: String, context: Context) {
+    val db = FirebaseFirestore.getInstance()
+    val userID = FirebaseAuth.getInstance().currentUser?.uid
+
+    db.collection("users")
+        .document(userID ?: "")
+        .collection("portfolio")
+        .document("stockAssets")
+        .collection("assets")
+        .whereEqualTo("symbol", symbol)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            for (document in querySnapshot) {
+                document.reference.delete()
+                    .addOnSuccessListener {
+                        Toast.makeText(context, "$symbol removed from portfolio", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(context, "Error removing stock: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        }
+        .addOnFailureListener { e ->
+            Toast.makeText(context, "Error finding stock: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+}
+fun checkIfStockInPortfolio(symbol: String): Boolean {
+    val db = FirebaseFirestore.getInstance()
+    val userID = FirebaseAuth.getInstance().currentUser?.uid
+    var exists = false
+
+    db.collection("users")
+        .document(userID ?: "")
+        .collection("portfolio")
+        .document("stockAssets")
+        .collection("assets")
+        .whereEqualTo("symbol", symbol)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            exists = !querySnapshot.isEmpty
+        }
+        .addOnFailureListener {
+            exists = false
+        }
+
+    return exists
 }
