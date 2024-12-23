@@ -65,6 +65,11 @@ fun ProfileScreen(navController: NavController) {
                     context.startActivity(intent)
                 }
             )
+            Spacer(modifier = Modifier.height(12.dp))
+            ProfileButton(
+                text="Profile",
+                onClick = { navController.navigate("ProfileScreen") }
+            )
 
         }
     }

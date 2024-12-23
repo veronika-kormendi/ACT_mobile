@@ -26,6 +26,7 @@ import com.example.act.assets.CryptoDetails
 import com.example.act.assets.StockDetails
 import com.example.act.assets.ViewCrypto
 import com.example.act.assets.ViewStock
+import com.example.act.portfolio.PortfolioScreen
 import com.example.act.screens.ChatPremAI
 import com.example.act.screens.CreateReviewScreen
 import com.example.act.screens.ProfileScreen
@@ -53,6 +54,7 @@ sealed class Screen(val route: String) {
     object Login : Screen("SigninScreen")
     object Stock : Screen("ViewStock")
     object Crypto : Screen("ViewCrypto")
+    object Portfolio : Screen("PortfolioScreen")
 }
 
 // navigation items for the bottom bar
@@ -128,7 +130,7 @@ fun MainFunction() {
             composable(Screen.Update.route) { ProfileUpdateScreen(navController) }
             composable(Screen.Support.route) { SupportScreen(navController) }
             composable(Screen.Reviews.route) { ReviewScreen(navController) }
-
+            composable(Screen.Portfolio.route) { PortfolioScreen(navController) }
         }
     }
 }
