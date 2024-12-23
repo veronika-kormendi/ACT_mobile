@@ -34,10 +34,16 @@ fun AssetScreen(navController: NavController){
 
 @Composable
 fun ToStock(navController: NavController){
-    Image(painter= painterResource(R.drawable.stonks), contentDescription = null, modifier = Modifier.size(200.dp).clickable{navController.navigate("ViewStock")})
+    Column(){
+        Text(text = "Stocks")
+        Image(painter= painterResource(R.drawable.stonks), contentDescription = null, modifier = Modifier.size(200.dp).clickable{navController.navigate("ViewStock")})
+    }
 }
 
 @Composable
 fun ToCrypto(navController: NavController){
-    Image(painter= painterResource(R.drawable.cryptoicon), contentDescription = null, modifier = Modifier.size(200.dp).clickable{navController.navigate("ViewCrypto")})
+    Column(){
+        Text(text = "Cryptocurrencies")
+        Image(painter= painterResource(R.drawable.cryptoicon), contentDescription = null, modifier = Modifier.size(200.dp).clickable{navController.navigate("ViewCrypto")})
+    }
 }

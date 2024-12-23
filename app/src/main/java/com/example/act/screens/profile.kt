@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Help
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.AttachMoney
+
+
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Memory
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Info
+
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
@@ -62,7 +63,7 @@ fun ProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(40.dp))
             ProfileButton(text = "Support", onClick = { navController.navigate("SupportScreen")},
                 color = Color(0xFF8BC34A),
-                icon = Icons.AutoMirrored.Filled.Help
+                icon = Icons.Default.Face
             )
             Spacer(modifier = Modifier.height(12.dp))
             ProfileButton(text = "Reviews", onClick = { navController.navigate("ReviewScreen")},
@@ -88,21 +89,12 @@ fun ProfileScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(12.dp))
             ProfileButton(
-                text = "AI Engine",
-                onClick = {
-                    navController.navigate("AIScreen")
-                },
-                color = Color(0xFFE94560),
-                icon = Icons.Default.Memory
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            ProfileButton(
                 text = "Assets",
                 onClick = {
                     navController.navigate("AssetsScreen")
                 },
                 color = Color(0xFF6A0572),
-                icon = Icons.Default.AttachMoney
+                icon = Icons.Default.ShoppingCart
             )
             Spacer(modifier = Modifier.height(12.dp))
             ProfileButton(
@@ -111,12 +103,14 @@ fun ProfileScreen(navController: NavController) {
                     navController.navigate("FinancialScreen")
                 },
                 color = Color(0xFF3282B8),
-                icon = Icons.Default.AccountBalance
+                icon = Icons.Default.Info
             )
             Spacer(modifier = Modifier.height(12.dp))
             ProfileButton(
-                text="Profile",
-                onClick = { navController.navigate("PortfolioScreen") }
+                text = "Portfolio",
+                onClick = { navController.navigate("PortfolioScreen") },
+                color = Color(0xFF0F4C75),
+                icon = Icons.Default.Notifications
             )
 
             Spacer(modifier = Modifier.height(12.dp))

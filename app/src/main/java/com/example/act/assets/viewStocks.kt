@@ -3,7 +3,11 @@ package com.example.act.assets
 import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +16,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +34,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -72,14 +83,27 @@ fun ViewStock(navController: NavController){
 
 @Composable
 fun StockItem(stock: String, onClick: () -> Unit) {
-    Text(
-        text = stock,
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .clickable { onClick() },
-        style = MaterialTheme.typography.bodyLarge
-    )
+            .clickable { onClick() }
+            .padding(vertical = 4.dp), // Add spacing between cards
+        shape = RoundedCornerShape(8.dp), // Rounded corners
+        elevation = CardDefaults.cardElevation(4.dp) // Shadow effect
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer) // Background color
+                .padding(16.dp) // Inner padding
+        ) {
+            Text(
+                text = stock,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer // Text color for contrast
+            )
+        }
+    }
 }
 
 
@@ -118,12 +142,14 @@ fun StockDetails(symbol: String) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Add scrollable behavior
             .padding(16.dp)
     ) {
 
         Text(
-            text = "Details for $symbol",
-            style = MaterialTheme.typography.headlineMedium
+            text = "Stock Details: $symbol",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -131,36 +157,56 @@ fun StockDetails(symbol: String) {
             errorMessage.value != null -> {
                 Text(
                     text = errorMessage.value ?: "Unknown error",
-                    color = MaterialTheme.colorScheme.error
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
             stockData.value == null -> {
-                CircularProgressIndicator()
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
             else -> {
                 val data = stockData.value?.get(symbol)
                 if (data != null) {
-                    Text("Open: ${data.Open}")
-                    Text("High: ${data.High}")
-                    Text("Low: ${data.Low}")
-                    Text("Close: ${data.Close}")
-                    Text("Volume: ${data.Volume}")
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp)
+                    ) {
+                        Text("Open: ${data.Open}", style = MaterialTheme.typography.bodyLarge)
+                        Text("High: ${data.High}", style = MaterialTheme.typography.bodyLarge)
+                        Text("Low: ${data.Low}", style = MaterialTheme.typography.bodyLarge)
+                        Text("Close: ${data.Close}", style = MaterialTheme.typography.bodyLarge)
+                        Text("Volume: ${data.Volume}", style = MaterialTheme.typography.bodyLarge)
+                    }
 
                     if (!inPortfolio.value) {
                         TextField(
                             value = quantityInput.value,
                             onValueChange = { quantityInput.value = it },
                             label = { Text("Quantity to buy:") },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     } else {
-                        Text("Quantity owned: ${ownedQuantity.value ?: "Unknown"}")
+                        Text(text = "Quantity Owned: ${ownedQuantity.value ?: "Unknown"}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(bottom = 8.dp))
                         val profit = ownedQuantity.value?.let {
                             (data.Close - (boughtPrice.value ?: 0.0)) * it
                         }
-                        Text("Profit: ${profit ?: "Calculating..."}")
+                        Text(text = "Profit: ${profit ?: "Calculating..."}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (profit != null && profit >= 0) Color.Green else Color.Red,
+                            modifier = Modifier.padding(bottom = 16.dp))
+                        if(aiEnabled.value){
+                            AiStockRecommendation(symbol)
+                        }
                     }
                     Button(
                         onClick = {
@@ -185,16 +231,76 @@ fun StockDetails(symbol: String) {
                     ) {
                         Text(if (inPortfolio.value) "Remove from Portfolio" else "Add to Portfolio")
                     }
-
                 } else {
                     Text("No data available for $symbol")
                 }
             }
         }
     }
-    }
+}
 
-fun callStockAIApi() {
+@Composable
+fun AiStockRecommendation(symbol: String) {
+    val aiAnalysis = remember { mutableStateOf<String?>(null) }
+    val aiLoading = remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        // Button to trigger AI analysis
+        Button(
+            onClick = {
+                aiLoading.value = true
+                aiAnalysis.value = null
+                callStockAIApi(symbol) { result ->
+                    aiAnalysis.value = result
+                    aiLoading.value = false
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Analyze Stock")
+        }
+
+        // Show loading indicator when AI analysis is in progress
+        if (aiLoading.value) {
+            Text(
+                text = "AI Analysis in progress...",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            CircularProgressIndicator(modifier = Modifier.padding(top = 8.dp))
+        }
+
+        // Display AI analysis result with a styled background
+        aiAnalysis.value?.let { analysis ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp),
+                shape = RoundedCornerShape(8.dp), // Rounded corners
+                elevation = CardDefaults.cardElevation(4.dp) // Shadow effect
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceVariant) // Background color
+                        .padding(16.dp) // Inner padding
+                ) {
+                    Text(
+                        text = "AI Analysis: $analysis",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant // Text color for contrast
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+fun callStockAIApi(symbol: String, onResult: (String) -> Unit) {
     CoroutineScope(Dispatchers.IO).launch {
         try {
             val url = URL("https://aiengine-fw62.onrender.com/analyze_stock")
@@ -205,7 +311,7 @@ fun callStockAIApi() {
 
             // Prepare the request body
             val jsonBody = JSONObject()
-            jsonBody.put("ticker_symbol", "AAPL")
+            jsonBody.put("ticker_symbol", symbol)
 
             // Write the request body
             val outputStream = OutputStreamWriter(connection.outputStream)
@@ -220,19 +326,21 @@ fun callStockAIApi() {
                 val gson = Gson()
                 val stockResponse = gson.fromJson(response, StockAnalysis::class.java)
 
-                // Access the parsed data
-                println("Ticker: ${stockResponse.ticker_symbol}")
-                println("Analysis: ${stockResponse.analysis}")
+                // Return analysis
+                onResult(stockResponse.analysis ?: "No analysis available.")
             } else {
-                println("Error: ${connection.responseCode}")
+                onResult("Error: ${connection.responseCode}")
             }
 
             connection.disconnect()
         } catch (e: Exception) {
             e.printStackTrace()
+            onResult("Error occurred: ${e.message}")
         }
     }
 }
+
+
 suspend fun callStockApi(symbol: String): Map<String, StockData> {
     return withContext(Dispatchers.IO) {
         val url = URL("https://yfianance-api-904c5fa45cd2.herokuapp.com/get_stock_data")
