@@ -39,6 +39,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -250,25 +251,24 @@ fun addCryptoToWatchlist(symbol: String, quantity: Double, price: Double, contex
 
 }
 
-fun checkIfInPortfolio(symbol: String): Boolean {
+suspend fun checkIfInPortfolio(symbol: String): Boolean {
     val db = FirebaseFirestore.getInstance()
     val userID = FirebaseAuth.getInstance().currentUser?.uid
-    var exists = false
-
-    db.collection("users")
-        .document(userID ?: "")
-        .collection("portfolio")
-        .document("cryptoAssets")
-        .collection("assets")
-        .whereEqualTo("symbol", symbol)
-        .get()
-        .addOnSuccessListener { querySnapshot ->
-            exists = !querySnapshot.isEmpty
+    return withContext(Dispatchers.IO) {
+        try {
+            val snapshot = db.collection("users")
+                .document(userID ?: "")
+                .collection("portfolio")
+                .document("cryptoAssets")
+                .collection("assets")
+                .whereEqualTo("symbol", symbol)
+                .get()
+                .await()
+            !snapshot.isEmpty
+        } catch (e: Exception) {
+            false
         }
-        .addOnFailureListener {
-            exists = false
-        }
-    return exists
+    }
 }
 
 fun removeCryptoFromPortfolio(symbol: String, context: Context) {

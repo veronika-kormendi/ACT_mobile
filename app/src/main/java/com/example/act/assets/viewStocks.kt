@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
@@ -260,24 +261,22 @@ fun removeStockFromPortfolio(symbol: String, context: Context) {
             Toast.makeText(context, "Error finding stock: ${e.message}", Toast.LENGTH_SHORT).show()
         }
 }
-fun checkIfStockInPortfolio(symbol: String): Boolean {
+suspend fun checkIfStockInPortfolio(symbol: String): Boolean {
     val db = FirebaseFirestore.getInstance()
     val userID = FirebaseAuth.getInstance().currentUser?.uid
-    var exists = false
-
-    db.collection("users")
-        .document(userID ?: "")
-        .collection("portfolio")
-        .document("stockAssets")
-        .collection("assets")
-        .whereEqualTo("symbol", symbol)
-        .get()
-        .addOnSuccessListener { querySnapshot ->
-            exists = !querySnapshot.isEmpty
+    return withContext(Dispatchers.IO) {
+        try {
+            val snapshot = db.collection("users")
+                .document(userID ?: "")
+                .collection("portfolio")
+                .document("stockAssets")
+                .collection("assets")
+                .whereEqualTo("symbol", symbol)
+                .get()
+                .await()
+            !snapshot.isEmpty
+        } catch (e: Exception) {
+            false
         }
-        .addOnFailureListener {
-            exists = false
-        }
-
-    return exists
+    }
 }

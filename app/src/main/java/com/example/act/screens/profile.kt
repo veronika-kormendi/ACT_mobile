@@ -113,6 +113,11 @@ fun ProfileScreen(navController: NavController) {
                 color = Color(0xFF3282B8),
                 icon = Icons.Default.AccountBalance
             )
+            Spacer(modifier = Modifier.height(12.dp))
+            ProfileButton(
+                text="Profile",
+                onClick = { navController.navigate("ProfileScreen") }
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
             ProfileButton(
