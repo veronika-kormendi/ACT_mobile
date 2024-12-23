@@ -18,10 +18,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.credentials.Credential
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.example.act.R
 import com.example.act.Screen
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import kotlinx.coroutines.CoroutineScope
 
 
 @Composable
@@ -108,3 +111,23 @@ fun SigninScreen(navController: NavController, auth: FirebaseAuth) {
         )
     }
 }
+//@Composable
+//fun AuthenticationButton(
+//    buttonText: Int,
+//    onGetCredentialResponse: (Credential) -> Unit)
+//{
+//    val context = LocalContext.current
+//    val CoroutineScope = rememberCoroutineScope()
+//    val credentialManager = androidx.credentials.CredentialManager.create(context)
+//
+//    Button(
+//        onClick = {
+//           val googleOption = GetGoogleIdOption.Builder()
+//               .setFilterByAuthorizedAccounts(false)
+//               .setServerClientId(context.getString(R.string.default_web_client_id))
+//               .build()
+//        }
+//    ){
+//
+//    }
+//}
