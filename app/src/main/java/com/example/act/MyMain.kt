@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.act.accounts.ProfileUpdateScreen
+import com.example.act.assets.AssetScreen
 import com.example.act.assets.CryptoDetails
 import com.example.act.assets.StockDetails
 import com.example.act.assets.ViewCrypto
@@ -50,6 +51,8 @@ sealed class Screen(val route: String) {
     object Profile : Screen("ProfileScreen")
     object Update : Screen("UpdateProfileScreen")
     object Login : Screen("SigninScreen")
+    object Stock : Screen("ViewStock")
+    object Crypto : Screen("ViewCrypto")
 }
 
 // navigation items for the bottom bar
@@ -106,15 +109,17 @@ fun MainFunction() {
             startDestination = Screen.Profile.route,
             modifier = Modifier.padding(innerPadding)
         ) {
+            composable(Screen.Assets.route) { AssetScreen(navController) }
+            composable(Screen.Crypto.route){ ViewCrypto(navController) }
             composable("cryptoDetails/{symbol}") { backStackEntry ->
                 val symbol = backStackEntry.arguments?.getString("symbol") ?: ""
                 CryptoDetails(symbol)
             }
+            composable(Screen.Stock.route){ ViewStock(navController) }
             composable("stockDetails/{symbol}") { backStackEntry ->
                 val symbol = backStackEntry.arguments?.getString("symbol") ?: ""
                 StockDetails(symbol)
             }
-            composable(Screen.Assets.route) { ViewStock(navController) }
             composable(Screen.Questions.route) { QuestionScreen() }
             composable(Screen.PremiumChat.route) { ChatPremAI() }
             composable(Screen.Profile.route) { ProfileScreen(navController) }
