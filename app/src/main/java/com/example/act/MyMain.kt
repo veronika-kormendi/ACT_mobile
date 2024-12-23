@@ -1,10 +1,5 @@
 package com.example.act
 
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -41,8 +36,6 @@ import com.example.act.screens.QuestionScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 //creating screens/routes of the app
@@ -143,7 +136,6 @@ fun MainFunction() {
             composable(Screen.Reviews.route) { ReviewScreen(navController) }
             composable(Screen.Portfolio.route) { PortfolioScreen(navController) }
             composable(Screen.PriceAlert.route) { PriceAlertScreen() }
-
         }
     }
 }
