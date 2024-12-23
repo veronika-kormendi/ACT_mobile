@@ -90,16 +90,24 @@ fun CryptoDetails(symbol: String) {
     // State to hold the API data
     val cryptoData = remember { mutableStateOf<Map<String, StockData>?>(null) }
     val errorMessage = remember { mutableStateOf<String?>(null) }
-    val context = LocalContext.current
 
-    val quantity = remember { mutableStateOf("") }
+    val quantityInput = remember { mutableStateOf("") }
     val inPortfolio = remember { mutableStateOf(false) }
+    val ownedQuantity = remember { mutableStateOf<Double?>(null) }
+    val boughtPrice = remember { mutableStateOf<Double?>(null) }
+    val context = LocalContext.current
 
     // Fetch data using LaunchedEffect
     LaunchedEffect(symbol) {
         try {
             cryptoData.value = callCryptoApi(symbol)
             inPortfolio.value = checkIfInPortfolio(symbol)
+            if (inPortfolio.value) {
+                getCryptoDetails(symbol, context) { quantity, price ->
+                    ownedQuantity.value = quantity
+                    boughtPrice.value = price
+                }
+            }
         } catch (e: Exception) {
             errorMessage.value = "Failed to fetch data: ${e.message}"
         }
@@ -134,20 +142,31 @@ fun CryptoDetails(symbol: String) {
                         Text("Low: ${data.Low}")
                         Text("Close: ${data.Close}")
                         Text("Volume: ${data.Volume}")
-                        TextField(
-                            value = quantity.value,
-                            onValueChange = { quantity.value = it },
-                            label = { Text("Quantity to buy: ") },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                        )
                         Spacer(modifier = Modifier.height(8.dp))
+
+                        if(!inPortfolio.value){
+                            TextField(
+                                value = quantityInput.value,
+                                onValueChange = { quantityInput.value = it },
+                                label = { Text("Quantity to buy:") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        else{
+                            Text("Quantity owned: ${ownedQuantity.value ?: "Unknown"}")
+                            val profit = ownedQuantity.value?.let {
+                                (data.Close - (boughtPrice.value ?: 0.0)) * it
+                            }
+                            Text("Profit: ${profit ?: "Calculating..."}")
+                        }
                         Button(
                             onClick = {
                                 if (inPortfolio.value) {
                                     removeCryptoFromPortfolio(symbol, context)
                                     inPortfolio.value = false
                                 } else {
-                                    val qty = quantity.value.toDoubleOrNull()
+                                    val qty = quantityInput.value.toDoubleOrNull()
                                     if (qty != null && qty > 0) {
                                         addCryptoToWatchlist(
                                             symbol = symbol,
@@ -295,5 +314,32 @@ fun removeCryptoFromPortfolio(symbol: String, context: Context) {
         }
         .addOnFailureListener { e ->
             Toast.makeText(context, "Error finding asset: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+}
+fun getCryptoDetails(symbol: String, context: Context, onResult: (quantity: Double?, price: Double?) -> Unit) {
+    val db = FirebaseFirestore.getInstance()
+    val userID = FirebaseAuth.getInstance().currentUser?.uid
+
+    db.collection("users")
+        .document(userID ?: "")
+        .collection("portfolio")
+        .document("cryptoAssets") // Change to "cryptoAssets" if retrieving crypto
+        .collection("assets")
+        .whereEqualTo("symbol", symbol)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            if (!querySnapshot.isEmpty) {
+                val document = querySnapshot.documents.first()
+                val quantity = document.getDouble("quantity")
+                val price = document.getDouble("price")
+                onResult(quantity, price) // Pass the results to the callback
+            } else {
+                Toast.makeText(context, "Asset not found in portfolio", Toast.LENGTH_SHORT).show()
+                onResult(null, null)
+            }
+        }
+        .addOnFailureListener { e ->
+            Toast.makeText(context, "Error retrieving asset: ${e.message}", Toast.LENGTH_SHORT).show()
+            onResult(null, null)
         }
 }
