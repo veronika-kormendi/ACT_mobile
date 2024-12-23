@@ -1,10 +1,5 @@
 package com.example.act
 
-import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -23,32 +18,26 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.act.accounts.ProfileUpdateScreen
-import com.example.act.accounts.ResetPasswordScreen
-import com.example.act.accounts.SigninScreen
-import com.example.act.accounts.SignupScreen
-import com.example.act.accounts.signupUser
-import com.example.act.payment.PremiumAIScreen
+import com.example.act.screens.AIEngineScreen
+import com.example.act.screens.AssetsScreen
 import com.example.act.screens.ChatPremAI
 import com.example.act.screens.CreateReviewScreen
+import com.example.act.screens.FinancialScreen
 import com.example.act.screens.PriceAlertScreen
 import com.example.act.screens.ProfileScreen
 import com.example.act.screens.QuestionScreen
 import com.example.act.screens.ReviewScreen
 import com.example.act.screens.SupportFormScreen
 import com.example.act.screens.SupportScreen
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 //creating screens/routes of the app
 sealed class Screen(val route: String) {
     object SignUp : Screen("SignUpScreen") // for account registration
     object AddReview : Screen("CreateReview")
-    object AIPremiumUpgrade : Screen("AIPremiumUpgradeScreen")
     object Support : Screen("SupportScreen")
     object Reviews : Screen("ReviewScreen")
     object Reset : Screen("ResetPassScreen")
@@ -56,6 +45,8 @@ sealed class Screen(val route: String) {
     object PriceAlert : Screen("PriceAlertScreen")
     object Assets : Screen("AssetsScreen")
     object Questions : Screen("FAQScreen")
+    object Financial : Screen("FinancialScreen")
+    object AIEngine : Screen("AIScreen")
     object PremiumChat : Screen("PremiumAI")
     object Profile : Screen("ProfileScreen")
     object Update : Screen("UpdateProfileScreen")
@@ -118,6 +109,9 @@ fun MainFunction() {
         ) {
             composable(Screen.Questions.route) { QuestionScreen() }
             composable(Screen.PremiumChat.route) { ChatPremAI() }
+            composable(Screen.Assets.route) { AssetsScreen() }
+            composable(Screen.Financial.route) { FinancialScreen()}
+            composable(Screen.AIEngine.route) { AIEngineScreen() }
             composable(Screen.Profile.route) { ProfileScreen(navController) }
             composable(Screen.SupportForm.route) { SupportFormScreen() }
             composable(Screen.AddReview.route) { CreateReviewScreen(navController) }

@@ -68,7 +68,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.volley)
     implementation(libs.androidx.runner)
-    //implementation(libs.compose.pay.button)
+    implementation("androidx.compose.material:material-icons-extended:1.7.6")
     implementation(libs.coil.compose)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.auth.ktx)
